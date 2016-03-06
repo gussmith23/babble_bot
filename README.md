@@ -8,6 +8,8 @@ You must rename the config to `babble_bot.cfg` and insert working fields. This m
 2. Get an API key ("secret") and client ID for the Bing Translate API (which does 1M translations free per month)
 
 ## Dependencies:
-- microsofttranslator
+- microsofttranslator (you may have to install this manually from the GitHub repo if on Windows)
 - pyTelegramBotAPI
-- configparser
+
+Install these using Pip.
+
