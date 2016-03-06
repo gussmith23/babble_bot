@@ -1,18 +1,16 @@
 from microsofttranslator import Translator
 import random
+import configparser
 
-languages = ["af", "sq", "ar","be", "bg", "ca", "zh-CN", "zh-TW", "hr",
-          "cs", "da", "nl", "en", "et", "tl", "fi", "fr", "gl", "de",
-          "el", "iw", "hi", "hu", "is", "id", "ga", "it", "ja", "ko",
-          "lv", "lt", "mk", "ms", "mt", "no", "fa", "pl", "pt", "ro",
-          "ru", "sr", "sk", "sl", "es", "sw", "sv", "th", "tr", "uk",
-          "vi", "cy", "yi"]
+# get config
+config = configparser.ConfigParser()
+config.read("babble_bot.cfg")
 
-client_id = 'babble_bot'
-client_secret = 'YKJH9gMPCuoSV82xqB3ncVWcitu3Ts+pBRIDapkppWU='
+# get settings
+client_id = config['translation_api']['client_id']
+client_secret = config['translation_api']['client_secret']
 
-
-
+# TODO put these in config (and update example!)
 low = 2
 high = 5
 
