@@ -1,5 +1,4 @@
 import telebot
-import re
 from mangle import Mangle
 import random
 import configparser
