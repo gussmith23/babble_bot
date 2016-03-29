@@ -12,7 +12,7 @@ client_secret = config['translation_api']['client_secret']
 
 # TODO put these in config (and update example!)
 low = 2
-high = 5
+high = 50
 
 class Mangle:
   
