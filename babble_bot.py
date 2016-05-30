@@ -20,6 +20,9 @@ def echo_all(message):
     # TODO getting an error here regarding utf characters. commenting it out because it's not needed.
     #print("[{}] Sending message to chat {} ({}).".format(datetime.now().time(), message.chat.title, message.chat.id))
     bot.send_message(message.chat.id, m.mangle(message_text=message.text))
+
+def reply_to_dm(regex='^@babble_bot'):
+    bot.send_message(message.chat.id, m.mangle(mesage_text=message.text[12:]))
 		
 print("Bot started!")
 bot.polling()						# Bot waits for events.
