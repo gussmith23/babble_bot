@@ -19,7 +19,7 @@ freq = 0.1
 def echo_all(message):
     # TODO getting an error here regarding utf characters. commenting it out because it's not needed.
     #print("[{}] Sending message to chat {} ({}).".format(datetime.now().time(), message.chat.title, message.chat.id))
-    bot.send_message(message.chat.id, m.mangle(message_text=message.text))
+    bot.send_message(message.chat.id, m.mangle(message_text=message.text.replace('@babble_bot','')))
 		
 print("Bot started!")
 bot.polling()						# Bot waits for events.
