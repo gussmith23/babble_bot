@@ -1,6 +1,6 @@
 # babble_bot
 
-it's that babble boy.
+it's that babble boy
 
 [best of.](https://docs.google.com/document/d/1UiTHk2Z7wy-_rXSBy8YJ_N2CqeXsEROLD5NXcvXYd8A/edit?usp=sharing)
 
