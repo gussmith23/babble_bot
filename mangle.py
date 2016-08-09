@@ -15,27 +15,44 @@ low = 2
 high = 50
 
 class Mangle:
-  
-  def __init__(self):
-    self.translator = Translator(client_id, client_secret) 
-    self.langs = self.translator.get_languages()
 
-  def mangle(self, message_text, language='en', times=0):
+	def __init__(self):
+		self.translator = Translator(client_id, client_secret) 
+		self.langs = self.translator.get_languages()
 
-    # If they didn't specify, pick a random number of 
-    #     times to scramble.
-    if times == 0: times = random.randint(low, high)
+	def mangle(self, message_text, language='en', times=0):
+		'''
+		Returns a dict with the following fields:
+		- old_message
+		- new_message
+		- languages: a list of the languages traversed in order
+		'''
 
-    for i in range(times):
+		mangled_message_info = {
+		'old_message' : message_text,
+		'new_message' : '',
+		'languages' : []
+		}
 
-      rand_lang = random.choice(self.langs)
+		# If they didn't specify, pick a random number of 
+		#     times to scramble.
+		if times == 0: times = random.randint(low, high)
 
-      message_text = self.translator.translate(message_text, 
-                                          from_lang=language, 
-                                          to_lang=rand_lang)
+		for i in range(times):
 
-      message_text = self.translator.translate(message_text,
-                                          from_lang=rand_lang,
-                                          to_lang=language)
+			rand_lang = random.choice(self.langs)
 
-    return message_text
+			message_text = self.translator.translate(message_text, 
+																		from_lang=language, 
+																		to_lang=rand_lang)
+																		
+			mangled_message_info['languages'].append(rand_lang)
+
+			message_text = self.translator.translate(message_text,
+																		from_lang=rand_lang,
+																		to_lang=language)
+
+			mangled_message_info['languages'].append('en')
+
+		mangled_message_info['new_message'] = message_text
+		return mangled_message_info
