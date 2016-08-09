@@ -31,6 +31,15 @@ def handle_info(message):
 	bot.send_message(message.chat.id,
 		"*original:*\n{}\n*language map:*\n{}".format(message_info['old_message'], " → ".join(message_info['languages'])),
 		parse_mode = "Markdown")
+		
+@bot.message_handler(commands=['moreinfo'], func=lambda m: m.reply_to_message is not None and m.reply_to_message.message_id in messages)
+def handle_more_info(message):
+	message_info = messages[message.reply_to_message.message_id]
+	bot.send_message(message.chat.id,
+		"*original:*\n{}\n".format(message_info['old_message'])
+		+ "*map*:\n"
+		+ "\n".join(["_({})_ {}".format(message_info['languages'][i], message_info['all_messages'][i]) for i in range(len(message_info['languages']))]),
+		parse_mode = "Markdown")
 	
 print("Bot started!")
 bot.polling()						# Bot waits for events.

@@ -26,12 +26,14 @@ class Mangle:
 		- old_message
 		- new_message
 		- languages: a list of the languages traversed in order
+		- all_messages: a list of the message at each stage of translation
 		'''
 
 		mangled_message_info = {
-		'old_message' : message_text,
-		'new_message' : '',
-		'languages' : []
+			'old_message' : message_text,
+			'new_message' : '',
+			'languages' : [],
+			'all_messages' : []
 		}
 
 		# If they didn't specify, pick a random number of 
@@ -47,12 +49,14 @@ class Mangle:
 																		to_lang=rand_lang)
 																		
 			mangled_message_info['languages'].append(rand_lang)
+			mangled_message_info['all_messages'].append(message_text)
 
 			message_text = self.translator.translate(message_text,
 																		from_lang=rand_lang,
 																		to_lang=language)
 
 			mangled_message_info['languages'].append('en')
+			mangled_message_info['all_messages'].append(message_text)
 
 		mangled_message_info['new_message'] = message_text
 		return mangled_message_info
