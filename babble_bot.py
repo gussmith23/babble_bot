@@ -19,7 +19,7 @@ freq = 0.1
 messages = {}
 
 @bot.message_handler(func=lambda m: random.random() < freq or (m.text is not None and "@babble_bot" in m.text))
-def echo_all(message):
+def mangle_message(message):
 	message_text=message.text.replace('@babble_bot ','')
 	message_info = m.mangle(message_text=message_text)
 	sent = bot.send_message(message.chat.id, message_info['new_message'])
