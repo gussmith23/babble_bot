@@ -19,7 +19,26 @@ class Mangle:
 	def __init__(self):
 		self.translator = Translator(client_id, client_secret) 
 		self.langs = self.translator.get_languages()
+	
+	def translate_through_path(self, message_text, path):
+		'''
+		Translates a message through a series of languages.
+		path: The path of languages the message should be translated through. The
+					first language in the list should be the language which the message
+					starts in.
+		Returns a list of every step of the translation, where the first item is the
+		orignal message and the last is the final state.
+		'''
+		all_stages = [message_text]
+		for i in range(len(path)):
+			if i == 0:
+				continue
+			all_stages.append(self.translator.translate(all_stages[i - 1],
+																									from_lang = path[i - 1], 
+																									to_lang = path[i]))
+		return all_stages
 
+	
 	def mangle(self, message_text, language='en', times=0):
 		'''
 		Returns a dict with the following fields:
