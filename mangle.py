@@ -1,81 +1,84 @@
 from microsofttranslator import Translator
 import random
 import configparser
+from enum import Enum
 
 # get config
 config = configparser.ConfigParser()
 config.read("babble_bot.cfg")
 
-# get settings
-client_id = config['translation_api']['client_id']
-client_secret = config['translation_api']['client_secret']
-
-# TODO put these in config (and update example!)
-low = 2
-high = 50
+class MangleMethod(Enum):
+	flipflop = 1
+	straight = 2
+	manual = 3
+	def __str__(self):
+		if self == MangleMethod.flipflop:
+			return "flip flop: flip flop between a primary language and random languages."
+		elif self == MangleMethod.straight:
+			return "straight: run through a completely random list of languages."
+		elif self == MangleMethod.manual:
+			return "manual: language path specified by the user manually."
+		else:
+			raise NotImplementedError("MangleMethod value's __str__ conversion not implemented.")
 
 class Mangle:
 
-	def __init__(self):
+	def __init__(self, client_id, client_secret,
+								language, low, high, language_blacklist):
+		self.language = language
 		self.translator = Translator(client_id, client_secret) 
-		self.langs = self.translator.get_languages()
-	
-	def translate_through_path(self, message_text, path):
-		'''
-		Translates a message through a series of languages.
-		path: The path of languages the message should be translated through. The
-					first language in the list should be the language which the message
-					starts in.
-		Returns a list of every step of the translation, where the first item is the
-		orignal message and the last is the final state.
-		'''
-		all_stages = [message_text]
-		for i in range(len(path)):
+		self.languages = set(self.translator.get_languages()) - language_blacklist
+		self.low = low
+		self.high = high
+			
+	def mangle(self, 
+							message_text, 
+							times = 0, 
+							method = None, 
+							language_list = None):
+							
+		if method == MangleMethod.manual and not language_list:
+			raise ValueError("No language list given.")
+		if method is None:
+			method = random.sample(set(MangleMethod) - set([MangleMethod.manual]), 1)[0]
+		if times < 0:
+			raise ValueError("Parameter times must be greater than 0.")
+		if times == 0:
+			times = random.randint(self.low, self.high)
+			
+		if method == MangleMethod.manual:
+			language_list.insert(0, self.language)
+			language_list.append(self.language)
+		elif method == MangleMethod.flipflop:
+			language_list = []
+			language_list.append(self.language)
+			for i in range(int(times/2)):
+				language_list.extend([random.sample(self.languages, 1)[0], self.language])
+		elif method == MangleMethod.straight:
+			language_list = []
+			language_list.append(self.language)
+			language_list.extend(random.sample(self.languages, times))
+			language_list.append(self.language)
+		else:
+			raise NotImplementedError("MangleMethod {} not implemented.".format(method))
+		
+		all_messages = [message_text]
+		for i in range(len(language_list)):
 			if i == 0:
 				continue
-			all_stages.append(self.translator.translate(all_stages[i - 1],
-																									from_lang = path[i - 1], 
-																									to_lang = path[i]))
-		return all_stages
-
-	
-	def mangle(self, message_text, language='en', times=0):
-		'''
-		Returns a dict with the following fields:
-		- old_message
-		- new_message
-		- languages: a list of the languages traversed in order
-		- all_messages: a list of the message at each stage of translation
-		'''
-
-		mangled_message_info = {
-			'old_message' : message_text,
-			'new_message' : '',
-			'languages' : [],
-			'all_messages' : []
+			try:
+				text = self.translator.translate(all_messages[i - 1],
+																				from_lang = language_list[i - 1], 
+																				to_lang = language_list[i])
+				all_messages.append(text)
+			except Exception as e:
+				all_messages = False
+				break
+						
+		message_info = {
+			'method' : str(method),
+			'languages' : language_list,
+			'all_messages' : all_messages
 		}
-
-		# If they didn't specify, pick a random number of 
-		#     times to scramble.
-		if times == 0: times = random.randint(low, high)
-
-		for i in range(times):
-
-			rand_lang = random.choice(self.langs)
-
-			message_text = self.translator.translate(message_text, 
-																		from_lang=language, 
-																		to_lang=rand_lang)
-																		
-			mangled_message_info['languages'].append(rand_lang)
-			mangled_message_info['all_messages'].append(message_text)
-
-			message_text = self.translator.translate(message_text,
-																		from_lang=rand_lang,
-																		to_lang=language)
-
-			mangled_message_info['languages'].append('en')
-			mangled_message_info['all_messages'].append(message_text)
-
-		mangled_message_info['new_message'] = message_text
-		return mangled_message_info
+		
+		return message_info
