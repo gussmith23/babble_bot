@@ -16,8 +16,7 @@ bot = telebot.TeleBot(config['telegram_bot_api']['telegram_token'])
 
 blacklist = set(["tlh-Qaak"])
 
-m = Mangle(client_id = config['translation_api']['client_id'],
-						client_secret = config['translation_api']['client_secret'],
+m = Mangle(client_key = config['translation_api']['client_key'],
 						language = "en",
 						language_blacklist = blacklist,
 						low = 2,

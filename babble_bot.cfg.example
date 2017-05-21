@@ -2,5 +2,4 @@
 telegram_token = telegram token goes here 
 
 [translation_api]
-client_id = client id goes here
-client_secret = secret goes here
+client_key = client key goes here
