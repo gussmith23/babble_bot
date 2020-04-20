@@ -1,5 +1,2 @@
 [telegram_bot_api]
 telegram_token = telegram token goes here 
-
-[translation_api]
-client_key = client key goes here

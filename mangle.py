@@ -1,7 +1,7 @@
-from microsofttranslator import TranslatorCS as Translator
 import random
 import configparser
 from enum import Enum
+import googletrans
 
 # get config
 config = configparser.ConfigParser()
@@ -28,9 +28,8 @@ class MangleMethod(Enum):
 class Mangle:
     def __init__(self, client_key, language, low, high, language_blacklist):
         self.language = language
-        self.translator = Translator(client_key)
-        self.languages = set(
-            self.translator.get_languages()) - language_blacklist
+        self.translator = googletrans.Translator()
+        self.languages = set(googletrans.LANGUAGES.keys()) - language_blacklist
         self.low = low
         self.high = high
 
@@ -73,13 +72,15 @@ class Mangle:
                 #                                  from_lang = language_list[i - 1],
                 #				  to_lang = language_list[i])
                 params = {
-                    'text': all_messages[i - 1].encode('utf8'),
+                    'text': all_messages[i - 1],
                     'from': language_list[i - 1],
                     'to': language_list[i],
                     'contentType': 'text/plain',
                     'category': 'general',
                 }
-                text = self.translator.call("Translate", params)
+                text = self.translator.translate(params['text'],
+                                                 src=params['from'],
+                                                 dest=params['to']).text
                 all_messages.append(text)
             except Exception as e:
                 all_messages = False
