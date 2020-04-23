@@ -15,7 +15,7 @@ Now using Docker to make life easier!
    ```bash
    docker build -t babble-bot .
    ```
-1. Build the Docker image:
+1. Run the Docker image:
    ```bash
    docker run -it babble-bot
    ```
